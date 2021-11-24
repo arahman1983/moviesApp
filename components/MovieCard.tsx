@@ -1,10 +1,10 @@
 import { FontAwesome } from '@expo/vector-icons';
 import React, {useState} from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
+import { MovieObject } from '../constants/moviesType';
 import Rating from './Rating'
 
-export default function MovieCard  (){
-  const overView = "Bond has left active service and is enjoying a tranquil life in Jamaica. His peace is short-lived when his old friend Felix Leiter from the CIA turns up asking for help. The mission to rescue a kidnapped scientist turns out to be far more treacherous than expected, leading Bond onto the trail of a mysterious villain armed with dangerous new technology."
+export default function MovieCard  ({id, title, overview, releaseDate, poster, rating, favorite}: MovieObject){
   const [active, setActive] = useState<boolean>(false)
   
   const ToggleActive = () => {
@@ -14,12 +14,22 @@ export default function MovieCard  (){
   return(
     
       <View style={styles.card}>
+        <Image 
+                style={styles.background} 
+                source={{uri: `https://image.tmdb.org/t/p/w500${poster}`}}
+            />
         <View style={styles.header}>
           <View>
-            <Text style={styles.title}>Clifford the Big Red Dog</Text>
-            <Text style={styles.date}>2021-09-29</Text>
+            <Text style={styles.title}>
+              {
+              title.length > 30
+              ? `${title.substring(0,30)} ...`
+              : title
+              }
+          </Text>
+            <Text style={styles.date}>{releaseDate}</Text>
           </View>
-          <TouchableOpacity 
+          <Pressable 
             style={styles.favToggle}
             onPress={ToggleActive}>
             {
@@ -28,18 +38,24 @@ export default function MovieCard  (){
               : <FontAwesome name="heart-o" style={styles.iconO} />
             }
 
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <View style={styles.mainPhoto}>
-            <Rating />
+            <Rating rate={rating} />
             <Image 
                 style={styles.image} 
-                source={{uri: `https://image.tmdb.org/t/p/w500/dK12GIdhGP6NPGFssK2Fh265jyr.jpg`}}
+                source={{uri: `https://image.tmdb.org/t/p/w500${poster}`}}
             />
         </View>
 
         <View style={styles.overViewContainer}>
-          <Text style={styles.overView}>{overView.substring(0,150)} ...</Text>
+          <Text style={styles.overView}>
+            {
+              overview.length > 90
+              ? `${overview.substring(0,90)} ...`
+              : overview
+            }
+          </Text>
         </View>
 
       </View>
@@ -50,16 +66,25 @@ export default function MovieCard  (){
 
 const styles = StyleSheet.create({
   card:{
-    backgroundColor: "#000",
+    backgroundColor:"#000",
     width: '90%',
     height: '300px',
     borderRadius: 10,
     margin: 20,
     overflow: 'hidden'
   },
+  background:{
+    width: '100%',
+    height: '300px',
+    opacity: 0.4,
+    position: 'absolute',
+    top:0,
+    left:0,
+    zIndex:0
+  },
   title: {
     fontSize: 20,
-    color: '#FFF'
+    color: '#FFF',
   },
   icon:{
     color: 'red',
@@ -82,17 +107,18 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 10,
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    height: 65,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    flex: 1
+    zIndex:2
   },
   mainPhoto:{
     width:'100%',
-    height: '100%'
+    height: 160,
   },
   image: {
-    flex: 1,
+    height: '100%',
     width: '100%',
     top: 0,
     resizeMode: 'contain',
@@ -101,7 +127,7 @@ const styles = StyleSheet.create({
   overViewContainer: {
     position: 'absolute',
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.8)'
+    backgroundColor: 'rgba(0,0,0,0.6)'
   },
   overView:{
     zIndex:1,

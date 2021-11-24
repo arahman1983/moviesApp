@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName } from 'react-native';
+import { ColorSchemeName, Pressable } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -20,7 +20,9 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+      // theme = {DarkTheme}
+      >
       <RootNavigator />
     </NavigationContainer>
   );
@@ -63,38 +65,57 @@ function BottomTabNavigator() {
         name="Favorites"
         component={Favorites}
         options={{
-          title: 'Favorites',
+          title: 'Favorites Movies',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
           tabBarIcon: ({ color }) => <TabBarIcon size={20} name="heart" color={color} />,
+          headerLeft: () => (
+            <FontAwesome
+              name="heart"
+              size={25}
+              color={colorScheme === 'dark' ? 'white' : 'black'}
+              style={{ marginStart: 15, marginEnd: 5 }}
+            />
+          )
         }}
       />
       <BottomTab.Screen
         name="Home"
         component={Home}
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
-          title: 'Home',
+          title: 'Movies',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
           tabBarIcon: ({ color }) => <TabBarIcon size={30} name="home" color={color} />,
-          // headerRight: () => (
-          //   <Pressable
-          //     onPress={() => navigation.navigate('Modal')}
-          //     style={({ pressed }) => ({
-          //       opacity: pressed ? 0.5 : 1,
-          //     })}>
-          //     <FontAwesome
-          //       name="info-circle"
-          //       size={25}
-          //       color={Colors[colorScheme].text}
-          //       style={{ marginRight: 15 }}
-          //     />
-          //   </Pressable>
-          // ),
+          headerLeft: () => (
+            <FontAwesome
+              name="home"
+              size={25}
+              color={colorScheme === 'dark' ? 'white' : 'black'}
+              style={{ marginStart: 15 }}
+            />
+          )
         })}
       />
       <BottomTab.Screen
         name="AddMovie"
         component={AddMovie}
         options={{
-          title: 'AddMovie',
+          title: 'Add Movie',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
           tabBarIcon: ({ color }) => <TabBarIcon size={20} name="plus-circle" color={color} />,
+          headerLeft: () => (
+            <FontAwesome
+              name="plus-circle"
+              size={25}
+              color={colorScheme === 'dark' ? 'white' : 'black'}
+              style={{ marginStart: 15 }}
+            />
+          )
         }}
       />
     </BottomTab.Navigator>
