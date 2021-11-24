@@ -1,10 +1,11 @@
+import { FontAwesome } from '@expo/vector-icons';
 import React from 'react'
 import { View, StyleSheet, Text } from "react-native";
 
 export default function Rating(){
   return(
     <View style={styles.rate}>
-      <Text style={{fontSize: 20}}>*</Text>
+      <FontAwesome name="star" size={14} style={styles.star} />
       <Text style={styles.rateText}>7.9</Text>
     </View>
   )
@@ -13,7 +14,7 @@ export default function Rating(){
 const styles = StyleSheet.create({
   rate: {
     backgroundColor: "yellow",
-    width: '50px',
+    width: '60px',
     borderRadius: 5,
     position: 'absolute',
     right: 10,
@@ -25,9 +26,14 @@ const styles = StyleSheet.create({
     zIndex: 2
   },
   rateText:{
-    color: 'Black',
+    color: 'black',
     fontWeight: 'bold',
     fontSize: 18,
     textAlign: 'center'
+  },
+  star: {
+    color: 'black',
+    marginEnd: 2,
+    marginTop: 5
   }
 })
