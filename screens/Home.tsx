@@ -19,22 +19,15 @@ export default function Home({ navigation }: RootTabScreenProps<'Home'>) {
   const ifCloseToTop = (nativeEvent: any) => {
     return nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
     nativeEvent.contentSize.height - 100;
-    // return nativeEvent.contentOffset.y === nativeEvent.layoutMeasurement.height;
   };
 
   function updateList({nativeEvent}: any){
     if (ifCloseToTop(nativeEvent)) {
       updateMovieList()
-      // ScrollViewRef.current.scrollTo({
-      //   y: nativeEvent.layoutMeasurement.height,
-      //   x: 0,
-      //   animated: false,
-      // });
     }
   }
 
   function updateMovieList (){
-    console.log(pageNo)
     setPageNo(pageNo +1 )
     getAllMovies(pageNo + 1)
     .then(result => {
