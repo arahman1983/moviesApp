@@ -1,14 +1,35 @@
 import { FontAwesome } from '@expo/vector-icons';
 import React, {useState} from 'react';
 import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { MovieObject } from '../constants/moviesType';
+import { AddFavMovies, DeleteFavMovies } from '../redux/actions/movies.action';
+import { RootState } from '../redux/store';
+import { storeFavMovieData } from '../services/AsyncStorage';
 import Rating from './Rating'
 
 export default function MovieCard  ({id, title, overview, release_date, poster_path, vote_average, favorite}: MovieObject){
-  const [active, setActive] = useState<boolean>(false)
+  const [active, setActive] = useState<boolean>(favorite)
+  const favMovies = useSelector((state:RootState) => state.favMovies)
+  const dispatch = useDispatch()
   
   const ToggleActive = () => {
     setActive(!active)
+    if(!active){
+      const favArray = [...favMovies, {
+        id, title, overview, release_date, poster_path, vote_average, favorite: true
+      }]
+      storeFavMovieData(favArray)
+      dispatch(AddFavMovies({
+        id, title, overview, release_date, poster_path, vote_average, favorite: true
+      }))
+    }else{
+      const favArray = [...favMovies.filter(m => m.id !== id)]
+      storeFavMovieData(favArray)
+      dispatch(DeleteFavMovies({
+        id, title, overview, release_date, poster_path, vote_average, favorite : false
+      }))
+    }
   }
 
   return(

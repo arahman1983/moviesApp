@@ -1,5 +1,7 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AnyAction } from "redux";
 import { MovieObject } from "../../constants/moviesType";
+import { getFavMovieData } from "../../services/AsyncStorage";
 import { actionTypes } from "../actions/actionType";
 
 const movies: MovieObject[] = []

@@ -1,17 +1,18 @@
 import * as React from 'react';
-import { NativeModule, ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { MovieCard } from '../components'
 import { View } from '../components/Themed';
 import { MovieObject } from '../constants/moviesType';
-import { GetMovies } from '../redux/actions/movies.action';
+import { GetFavMovies, GetMovies } from '../redux/actions/movies.action';
 import { RootState } from '../redux/store';
+import { getFavMovieData } from '../services/AsyncStorage';
 import getAllMovies from '../services/getAllMovies';
 import { RootTabScreenProps } from '../types';
-import movies from './movies.json'
 
 export default function Home({ navigation }: RootTabScreenProps<'Home'>) {
   const allMovies = useSelector((state:RootState) => state.movies)
+  const favMovies = useSelector((state:RootState) => state.favMovies)
   const dispatch = useDispatch()
   const [pageNo, setPageNo] = React.useState(0)
   const [totalPages, setTotalPages] = React.useState(2)
@@ -23,38 +24,56 @@ export default function Home({ navigation }: RootTabScreenProps<'Home'>) {
 
   function updateList({nativeEvent}: any){
     if (ifCloseToTop(nativeEvent)) {
-      updateMovieList()
+      updateMovieList(favMovies)
     }
   }
 
-  function updateMovieList (){
+  function updateMovieList (favStored:MovieObject[]){
     setPageNo(pageNo +1 )
     getAllMovies(pageNo + 1)
     .then(result => {
       if(result.total_pages > totalPages){
         setTotalPages(result.total_pages)
       }
-      dispatch(GetMovies(changeOpj(result.results)))
+      dispatch(GetMovies(changeOpj(result.results, favStored)))
     }
     )
   }
 
-  function changeOpj (array: []){
-    return array.map((m:any):MovieObject => ({
-      id : m.id,
-      title : m.title,
-      overview : m.overview,
-      release_date : m.release_date,
-      poster_path : m.poster_path,
-      vote_average : m.vote_average,
-      favorite: false
-    }))
+  function changeOpj (array: [], favStored:MovieObject[]){
+    return array.map((m:any):MovieObject => {
+      const favArray = favStored.filter(fm => fm.id == m.id)
+      const Movie = {
+        id : m.id,
+        title : m.title,
+        overview : m.overview,
+        release_date : m.release_date,
+        poster_path : m.poster_path,
+        vote_average : m.vote_average,
+        favorite: favArray.length > 0
+      }
+      
+      return Movie
+    })
   }
 
   React.useEffect(() => {
     let mount: boolean = true
     if(mount){
-      updateMovieList()
+      let favRes:MovieObject[]
+      getFavMovieData().then((res:MovieObject[] | undefined) => {
+        if(typeof res != undefined){
+          favRes = res != null ? res : []
+          res != null
+          ? dispatch(GetFavMovies([...res]))
+          : dispatch(GetFavMovies([]))
+        }
+        
+        console.log('resFav :>> ', res);
+      })
+      setTimeout(() => {
+        updateMovieList(favRes)
+      }, 0);
     }
     return () => {
       mount = false
@@ -69,7 +88,7 @@ export default function Home({ navigation }: RootTabScreenProps<'Home'>) {
         scrollEventThrottle={400}
         >
         {
-          allMovies.map(({id, title,overview, release_date, poster_path, vote_average}) => (
+          allMovies.map(({id, title,overview, release_date, poster_path, vote_average, favorite}) => (
             <MovieCard
               key={id}
               id = {id}
@@ -78,7 +97,7 @@ export default function Home({ navigation }: RootTabScreenProps<'Home'>) {
               release_date = {release_date}
               poster_path = {poster_path}
               vote_average = {vote_average}
-              favorite = {false}
+              favorite = {favorite}
             />
           
           ))
