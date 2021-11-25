@@ -3,20 +3,22 @@ import React, {useState} from 'react';
 import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { MovieObject } from '../constants/moviesType';
-import { AddFavMovies, DeleteFavMovies } from '../redux/actions/movies.action';
+import { AddFavMovies, DeleteFavMovies, GetMovies } from '../redux/actions/movies.action';
 import { RootState } from '../redux/store';
 import { storeFavMovieData } from '../services/AsyncStorage';
 import Rating from './Rating'
 
 export default function MovieCard  ({id, title, overview, release_date, poster_path, vote_average, favorite}: MovieObject){
-  const [active, setActive] = useState<boolean>(favorite)
+  const [active, setActive] = useState<boolean>(favorite || false)
+  const allMovies = useSelector((state:RootState) => state.movies)
   const favMovies = useSelector((state:RootState) => state.favMovies)
   const dispatch = useDispatch()
   
   const ToggleActive = () => {
+    console.log('title :>> ', title);
     setActive(!active)
     if(!active){
-      const favArray = [...favMovies, {
+      const favArray = [...favMovies.filter(m => m.id != id), {
         id, title, overview, release_date, poster_path, vote_average, favorite: true
       }]
       storeFavMovieData(favArray)
@@ -24,11 +26,14 @@ export default function MovieCard  ({id, title, overview, release_date, poster_p
         id, title, overview, release_date, poster_path, vote_average, favorite: true
       }))
     }else{
-      const favArray = [...favMovies.filter(m => m.id !== id)]
+      const favArray = [...favMovies.filter(m => m.id != id)]
       storeFavMovieData(favArray)
       dispatch(DeleteFavMovies({
         id, title, overview, release_date, poster_path, vote_average, favorite : false
       }))
+      dispatch(GetMovies([...allMovies.filter(m => m.id != id), {
+        id, title, overview, release_date, poster_path, vote_average, favorite : false
+      }]))
     }
   }
 

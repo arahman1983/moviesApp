@@ -26,7 +26,7 @@ export function MoviesReducer(state: MovieObject[] = movies, action: MyActionTyp
 export function FavMoviesReducer (state: MovieObject[] = favMovies, action: MyActionType | AnyAction): MovieObject[] {
   switch (action.type) {
     case actionTypes.GET_FAV_MOVIES:
-      return [...state,...action.payload]
+      return [...action.payload]
     case actionTypes.ADD_TO_FAVORITES:
       return [...state, ...action.payload]
     case actionTypes.REMOVE_FAV_MOVIE:
