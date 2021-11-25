@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
 import { MovieObject } from '../constants/moviesType';
 import Rating from './Rating'
 
-export default function MovieCard  ({id, title, overview, releaseDate, poster, rating, favorite}: MovieObject){
+export default function MovieCard  ({id, title, overview, release_date, poster_path, vote_average, favorite}: MovieObject){
   const [active, setActive] = useState<boolean>(false)
   
   const ToggleActive = () => {
@@ -16,7 +16,7 @@ export default function MovieCard  ({id, title, overview, releaseDate, poster, r
       <View style={styles.card}>
         <Image 
                 style={styles.background} 
-                source={{uri: `https://image.tmdb.org/t/p/w500${poster}`}}
+                source={{uri: `https://image.tmdb.org/t/p/w500${poster_path}`}}
             />
         <View style={styles.header}>
           <View>
@@ -27,7 +27,7 @@ export default function MovieCard  ({id, title, overview, releaseDate, poster, r
               : title
               }
           </Text>
-            <Text style={styles.date}>{releaseDate}</Text>
+            <Text style={styles.date}>{release_date}</Text>
           </View>
           <Pressable 
             style={styles.favToggle}
@@ -41,10 +41,10 @@ export default function MovieCard  ({id, title, overview, releaseDate, poster, r
           </Pressable>
         </View>
         <View style={styles.mainPhoto}>
-            <Rating rate={rating} />
+            <Rating rate={vote_average} />
             <Image 
                 style={styles.image} 
-                source={{uri: `https://image.tmdb.org/t/p/w500${poster}`}}
+                source={{uri: `https://image.tmdb.org/t/p/w500${poster_path}`}}
             />
         </View>
 
