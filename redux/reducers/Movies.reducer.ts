@@ -16,6 +16,8 @@ export function MoviesReducer(state: MovieObject[] = movies, action: MyActionTyp
   switch (action.type) {
     case actionTypes.GET_MOVIES:
       return [...state,...action.payload]
+    case actionTypes.UPDATE_MOVIES:
+      return [...action.payload]
     case actionTypes.ADD_MOVIE:
       return [...state, ...action.payload]
     default:

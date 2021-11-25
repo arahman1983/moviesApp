@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { MovieObject } from '../constants/moviesType';
-import { AddFavMovies, DeleteFavMovies, GetMovies } from '../redux/actions/movies.action';
+import { AddFavMovies, DeleteFavMovies, GetMovies, UpdateMovies } from '../redux/actions/movies.action';
 import { RootState } from '../redux/store';
 import { storeFavMovieData } from '../services/AsyncStorage';
 import Rating from './Rating'
@@ -15,25 +15,42 @@ export default function MovieCard  ({id, title, overview, release_date, poster_p
   const dispatch = useDispatch()
   
   const ToggleActive = () => {
-    console.log('title :>> ', title);
     setActive(!active)
     if(!active){
       const favArray = [...favMovies.filter(m => m.id != id), {
         id, title, overview, release_date, poster_path, vote_average, favorite: true
       }]
-      storeFavMovieData(favArray)
-      dispatch(AddFavMovies({
-        id, title, overview, release_date, poster_path, vote_average, favorite: true
-      }))
+      storeFavMovieData(favArray).then(()=>{
+        dispatch(AddFavMovies({
+          id, title, overview, release_date, poster_path, vote_average, favorite: true
+        }))
+        dispatch(UpdateMovies([
+          ...allMovies.map(m => {
+            if(m.id == id){
+              return { ...m, favorite : false}
+            }else{
+              return m
+            }
+          }), 
+        ]))
+      })
     }else{
       const favArray = [...favMovies.filter(m => m.id != id)]
-      storeFavMovieData(favArray)
-      dispatch(DeleteFavMovies({
-        id, title, overview, release_date, poster_path, vote_average, favorite : false
-      }))
-      dispatch(GetMovies([...allMovies.filter(m => m.id != id), {
-        id, title, overview, release_date, poster_path, vote_average, favorite : false
-      }]))
+      storeFavMovieData(favArray).then(()=>{
+        dispatch(DeleteFavMovies({
+          id, title, overview, release_date, poster_path, vote_average, favorite : false
+        }))
+        dispatch(UpdateMovies([
+          ...allMovies.map(m => {
+            if(m.id == id){
+              return { ...m, favorite : false}
+            }else{
+              return m
+            }
+          }), 
+        ]))
+      })
+      
     }
   }
 
@@ -48,9 +65,9 @@ export default function MovieCard  ({id, title, overview, release_date, poster_p
           <View>
             <Text style={styles.title}>
               {
-              title.length > 30
-              ? `${title.substring(0,30)} ...`
-              : title
+                title.length > 30
+                ? `${title.substring(0,30)} ...`
+                : title
               }
           </Text>
             <Text style={styles.date}>{release_date}</Text>

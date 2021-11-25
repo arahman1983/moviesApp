@@ -9,6 +9,13 @@ export function GetMovies(movies:MovieObject[]): MyActionType {
   }
 }
 
+export function UpdateMovies(movies:MovieObject[]): MyActionType {
+  return {
+    type: actionTypes.UPDATE_MOVIES,
+    payload: movies
+  }
+}
+
 export function AddMovies(movie:MovieObject): MyActionType {
   return {
     type: actionTypes.ADD_MOVIE,

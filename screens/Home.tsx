@@ -68,8 +68,6 @@ export default function Home({ navigation }: RootTabScreenProps<'Home'>) {
           ? dispatch(GetFavMovies([...res]))
           : dispatch(GetFavMovies([]))
         }
-        
-        console.log('resFav :>> ', res);
       })
       setTimeout(() => {
         updateMovieList(favRes)
